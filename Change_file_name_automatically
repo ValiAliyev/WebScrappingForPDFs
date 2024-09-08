@@ -1,0 +1,27 @@
+import os
+import PyPDF2
+
+def extract_first_page_text(pdf_path):
+    with open(pdf_path, 'rb') as file:
+        reader = PyPDF2.PdfReader(file)
+        first_page = reader.pages[0]
+        return first_page.extract_text().strip()
+
+def rename_pdfs_in_folder(folder_path):
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".pdf"):
+            old_path = os.path.join(folder_path, filename)
+            try:
+                # Extract first page text
+                first_page_text = extract_first_page_text(old_path)
+                # Use first 50 characters of first page text to rename the file
+                new_filename = first_page_text[:50].replace('\n', ' ').replace('/', '').strip() + ".pdf"
+                new_path = os.path.join(folder_path, new_filename)
+                os.rename(old_path, new_path)
+                print(f"Renamed: {filename} -> {new_filename}")
+            except Exception as e:
+                print(f"Error processing {filename}: {e}")
+
+# Usage
+folder_path = "E:\Vali Aliyev\Vali Aliyev\IB_Chemistry\MEF Istanbul\Question Papers and Workseets\IGCSE_Worksheets"  # Replace with the path to your folder
+rename_pdfs_in_folder(folder_path)
